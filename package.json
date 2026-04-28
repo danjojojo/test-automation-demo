@@ -1,0 +1,31 @@
+{
+  "name": "playwright-openapi-api-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Learning project for generating an API and Playwright API tests from an OpenAPI 3.0 specification.",
+  "scripts": {
+    "generate": "npm run generate:api && npm run generate:tests",
+    "generate:api": "tsx scripts/generate-api.ts",
+    "generate:tests": "tsx scripts/generate-tests.ts",
+    "generate:from-spec": "tsx scripts/generate-tests.ts",
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "test": "npm run generate && playwright test",
+    "test:api": "npm test",
+    "test:generated": "playwright test tests/generated",
+    "test:contract": "npm run generate:tests && playwright test tests/generated",
+    "test:report": "playwright show-report"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

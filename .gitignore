@@ -1,0 +1,30 @@
+node_modules/
+dist/
+build/
+
+# Playwright
+playwright-report/
+blob-report/
+playwright/.cache/
+test-results/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+

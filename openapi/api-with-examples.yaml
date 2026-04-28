@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: Simple API overview
+  version: 2.0.0
+  description: >
+    Learning spec based on the OpenAPI Initiative's api-with-examples sample.
+    The generator in this project turns JSON response examples into runnable
+    Express routes and Playwright API assertions.
+servers:
+  - url: http://127.0.0.1:3774
+paths:
+  /:
+    get:
+      operationId: listVersionsv2
+      summary: List API versions
+      tags:
+        - versions
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionList'
+              examples:
+                foo:
+                  summary: Current and experimental versions
+                  value:
+                    versions:
+                      - status: CURRENT
+                        updated: '2011-01-21T11:33:21Z'
+                        id: v2.0
+                        links:
+                          - href: http://127.0.0.1:3774/v2/
+                            rel: self
+                      - status: EXPERIMENTAL
+                        updated: '2013-07-23T11:33:21Z'
+                        id: v3.0
+                        links:
+                          - href: http://127.0.0.1:3774/v3/
+                            rel: self
+        '300':
+          description: Multiple choices response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionList'
+              examples:
+                foo:
+                  summary: Alternate version list
+                  value:
+                    versions:
+                      - status: CURRENT
+                        updated: '2011-01-21T11:33:21Z'
+                        id: v2.0
+                        links:
+                          - href: http://127.0.0.1:3774/v2/
+                            rel: self
+                      - status: EXPERIMENTAL
+                        updated: '2013-07-23T11:33:21Z'
+                        id: v3.0
+                        links:
+                          - href: http://127.0.0.1:3774/v3/
+                            rel: self
+  /v2:
+    get:
+      operationId: getVersionDetailsv2
+      summary: Show API version details
+      tags:
+        - versions
+      responses:
+        '200':
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionDetails'
+              examples:
+                foo:
+                  summary: Current v2 details
+                  value:
+                    version:
+                      status: CURRENT
+                      updated: '2011-01-21T11:33:21Z'
+                      media-types:
+                        - base: application/xml
+                          type: application/vnd.openstack.compute+xml;version=2
+                        - base: application/json
+                          type: application/vnd.openstack.compute+json;version=2
+                      id: v2.0
+                      links:
+                        - href: http://127.0.0.1:3774/v2/
+                          rel: self
+                        - href: https://docs.openstack.org/api/
+                          type: text/html
+                          rel: describedby
+        '203':
+          description: Non-authoritative response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionDetails'
+              examples:
+                foo:
+                  summary: Proxy v2 details
+                  value:
+                    version:
+                      status: CURRENT
+                      updated: '2011-01-21T11:33:21Z'
+                      media-types:
+                        - base: application/xml
+                          type: application/vnd.openstack.compute+xml;version=2
+                        - base: application/json
+                          type: application/vnd.openstack.compute+json;version=2
+                      id: v2.0
+                      links:
+                        - href: http://127.0.0.1:3774/v2/
+                          rel: self
+components:
+  schemas:
+    Link:
+      type: object
+      required:
+        - href
+        - rel
+      properties:
+        href:
+          type: string
+          format: uri
+        rel:
+          type: string
+        type:
+          type: string
+    VersionSummary:
+      type: object
+      required:
+        - status
+        - updated
+        - id
+        - links
+      properties:
+        status:
+          type: string
+        updated:
+          type: string
+          format: date-time
+        id:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    VersionList:
+      type: object
+      required:
+        - versions
+      properties:
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/VersionSummary'
+    MediaType:
+      type: object
+      required:
+        - base
+        - type
+      properties:
+        base:
+          type: string
+        type:
+          type: string
+    VersionDetails:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          allOf:
+            - $ref: '#/components/schemas/VersionSummary'
+            - type: object
+              required:
+                - media-types
+              properties:
+                media-types:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MediaType'

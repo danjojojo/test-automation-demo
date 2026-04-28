@@ -1,0 +1,24 @@
+{
+  "workspace": "/Users/service/Documents/Projects/test-automation-demo/presentations/spec-driven-api-test-automation",
+  "pptx": "/Users/service/Documents/Projects/test-automation-demo/presentations/spec-driven-api-test-automation/output/output.pptx",
+  "checks": {
+    "pptx_package": {
+      "slide_count": 13,
+      "media_count": 3,
+      "chart_count": 0,
+      "zero_byte_media": [],
+      "invalid_png_media": [],
+      "placeholder_text": [],
+      "debug_line_colors": [],
+      "slide_numbers": [],
+      "warnings": [],
+      "failures": []
+    },
+    "output_hygiene": {
+      "output_dir": "/Users/service/Documents/Projects/test-automation-demo/presentations/spec-driven-api-test-automation/output",
+      "unexpected_files": []
+    }
+  },
+  "failures": [],
+  "warnings": []
+}
