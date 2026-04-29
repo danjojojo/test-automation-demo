@@ -34,13 +34,21 @@ test('GET /v2 returns 200', async ({ request }) => {
 
 This keeps API tests fast and focused because no browser page is needed.
 
+Edge tests use the same fixture, but call `request.fetch()` so the generator can set any HTTP method, headers, query string, and JSON body shape from one code path.
+
 ## Commands
 
 ```bash
 npm test
 ```
 
-Runs generation and then Playwright.
+Runs API generation, happy-path test generation, edge test generation, and then Playwright.
+
+```bash
+npm run test:edge
+```
+
+Regenerates and runs only `tests/generated/openapi.edge.spec.ts`.
 
 ```bash
 BASE_URL=https://api.example.com npm run test:generated
@@ -59,5 +67,6 @@ Opens the latest Playwright HTML report.
 - Change a response example in `openapi/api-with-examples.yaml`.
 - Run `npm run generate`.
 - Inspect the generated router and generated test.
+- Inspect `tests/generated/openapi.edge.spec.ts` and explain why the sample spec starts with an unknown-route `404` edge check.
 - Run `npm test`.
 - Break one generated API response by hand and watch the contract test fail.

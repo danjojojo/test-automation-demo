@@ -15,8 +15,9 @@ Build a small spec-driven workflow:
 1. Store the OpenAPI 3.0 spec in `openapi/api-with-examples.yaml`.
 2. Generate Express routes from each operation's first 2xx JSON response example.
 3. Generate Playwright tests from the same examples.
-4. Start the API automatically when Playwright runs.
-5. Record research, decisions, and learning notes in `docs/`.
+4. Generate Playwright edge tests from required parameters, request body schemas, security requirements, and documented client-error responses.
+5. Start the API automatically when Playwright runs.
+6. Record research, decisions, and learning notes in `docs/`.
 
 The reusable end goal is broader than the demo spec: `npm run generate:from-spec -- --spec <file-or-url>` should generate tests from a provided OpenAPI document, and `BASE_URL=<api-url> npm run test:generated` should run those tests against the target API.
 
@@ -27,6 +28,7 @@ The implementation is intentionally compact:
 - `scripts/lib/openapi.ts` parses the spec and extracts operations/examples.
 - `scripts/generate-api.ts` creates `src/generated/openapi-router.ts`.
 - `scripts/generate-tests.ts` creates `tests/generated/openapi.spec.ts`.
+- `scripts/generate-edge-tests.ts` creates `tests/generated/openapi.edge.spec.ts`.
 - `src/app.ts` wires the generated router into an Express app.
 - `playwright.config.ts` sets the API `baseURL` and starts the server with `webServer`.
 

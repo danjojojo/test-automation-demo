@@ -15,6 +15,7 @@ For a provided spec, pass a local path or URL:
 ```bash
 npm run generate:from-spec -- --spec ./path/to/openapi.yaml
 npm run generate:from-spec -- --spec https://example.com/openapi.yaml
+npm run generate:edge-from-spec -- --spec ./path/to/openapi.yaml
 ```
 
 ## Generated API
@@ -55,6 +56,31 @@ Each generated test:
 - Asserts the JSON response equals the OpenAPI example value.
 
 If an operation has a 2xx response but no JSON example, the generated test asserts the success status only.
+
+## Generated Edge Tests
+
+Run:
+
+```bash
+npm run generate:edge-tests
+```
+
+This creates negative Playwright tests in:
+
+```text
+tests/generated/openapi.edge.spec.ts
+```
+
+The edge generator reads operation parameters, request body metadata, JSON schemas, documented `4xx` responses, and security requirements. It can synthesize tests for missing required query/header parameters, invalid typed parameter values, missing required request bodies, invalid JSON body properties, missing authentication, and an undocumented path `404`.
+
+For a provided spec:
+
+```bash
+npm run generate:edge-from-spec -- --spec ./path/to/openapi.yaml --output tests/generated/openapi.edge.spec.ts
+BASE_URL=https://api.example.com npm run test:generated
+```
+
+The generated edge cases are only as strong as the spec. A schema with `required`, `enum`, `minimum`, `maxLength`, and documented validation responses gives the script more useful negative cases than a schema with paths and success responses only.
 
 ## Why Use Local Generators Here
 

@@ -44,6 +44,11 @@ openapi/api-with-examples.yaml
   -> scripts/generate-tests.ts
   -> tests/generated/openapi.spec.ts
   -> Playwright API tests
+
+openapi/api-with-examples.yaml
+  -> scripts/generate-edge-tests.ts
+  -> tests/generated/openapi.edge.spec.ts
+  -> Playwright negative API tests
 ```
 
 ## Useful Commands
@@ -51,10 +56,12 @@ openapi/api-with-examples.yaml
 ```bash
 npm run generate       # regenerate API routes and tests from the spec
 npm run generate:from-spec -- --spec <file-or-url> --output <test-file>
+npm run generate:edge-from-spec -- --spec <file-or-url> --output <edge-test-file>
 npm run start          # run the generated API on http://127.0.0.1:3774
 npm run dev            # run the API in watch mode
 npm test               # generate, boot the API, and run Playwright tests
 npm run test:contract  # regenerate tests only, then run generated tests
+npm run test:edge      # regenerate and run generated edge tests only
 npm run test:report    # open the Playwright HTML report
 ```
 

@@ -188,6 +188,27 @@ function step(label, detail, accent = colors.green, width = 250) {
   );
 }
 
+function edgeSignal(label, detail, accent) {
+  return panel(
+    {
+      name: `edge-signal-${label}`,
+      width: fixed(440),
+      height: fixed(128),
+      fill: '#FFFFFF',
+      borderRadius: 24,
+      padding: { x: 24, y: 18 },
+      justify: 'center'
+    },
+    column(
+      { width: fill, height: fill, gap: 8, justify: 'center' },
+      [
+        t(label, { size: 26, bold: true, color: accent, width: fill }),
+        t(detail, { size: 19, color: colors.muted, width: fill, lineSpacing: 1.08 })
+      ]
+    )
+  );
+}
+
 function arrow(color = colors.muted) {
   return t('->', { size: 38, bold: true, color, width: fixed(62), style: { align: 'center' } });
 }
@@ -299,6 +320,7 @@ addSlide((slide) => {
                 [
                   'openapi.yaml',
                   '  -> generate-tests.ts',
+                  '  -> generate-edge-tests.ts',
                   '  -> openapi.spec.ts',
                   '  -> playwright test'
                 ],
@@ -636,13 +658,80 @@ addSlide((slide) => {
 
 addSlide((slide) => {
   shell(slide, [
+    column(
+      { name: 'edge-title-stack', width: fill, height: hug, gap: 16 },
+      [
+        t('Edge tests', {
+          name: 'edge-slide-title',
+          size: 56,
+          bold: true,
+          color: colors.ink,
+          fontFamily: fonts.display,
+          width: fixed(760),
+          height: fixed(76),
+          lineSpacing: 0.98
+        }),
+        t('Step 6: negative tests need invalid requests, not just successful response examples.', {
+          name: 'edge-slide-subtitle',
+          size: 25,
+          color: colors.muted,
+          width: wrap(1120),
+          lineSpacing: 1.15
+        })
+      ]
+    ),
+    grid(
+      { width: fill, height: fill, columns: [fr(1), fr(1)], columnGap: 54 },
+      [
+        column(
+          { width: fill, height: fill, gap: 16, justify: 'center' },
+          [
+            edgeSignal('Required input?', 'Omit query, header, or body.', colors.green),
+            edgeSignal('Schema constraint?', 'Mutate type, enum, min/max, or format.', colors.blue),
+            edgeSignal('Security?', 'Send request without auth.', colors.orange),
+            edgeSignal('No route?', 'Check undocumented path returns 404.', colors.greenDark)
+          ]
+        ),
+        column(
+          { width: fill, height: fill, gap: 22, justify: 'center' },
+          [
+            codeBlock(
+              [
+                'npm run generate:edge-tests',
+                'npm run test:edge',
+                '',
+                "test('rejects missing required query parameter', async ({ request }) => {",
+                "  const response = await request.fetch('/users', {",
+                "    method: 'GET'",
+                '  })',
+                '  expect(response.status()).toBe(400)',
+                '})'
+              ],
+              { size: 20 }
+            ),
+            t('The sample spec produces the universal unknown-route edge test. Specs with required params, request bodies, auth, enums, and constraints produce richer negative tests.', {
+              size: 25,
+              color: colors.muted,
+              width: wrap(760),
+              lineSpacing: 1.12
+            })
+          ]
+        )
+      ]
+    ),
+    footer('Implementation anchor: scripts/generate-edge-tests.ts')
+  ]);
+});
+
+addSlide((slide) => {
+  shell(slide, [
     title('Run against the demo API', '`npm test` proves the whole learning loop end to end.'),
     row(
       { width: fill, height: fill, gap: 16, align: 'center', justify: 'center' },
       [
         step('npm test', 'single command', colors.green, 220),
         arrow(),
-        step('generate', 'routes + tests', colors.blue, 220),
+        step('generate', 'routes + tests + edge', colors.blue, 220),
         arrow(),
         step('webServer', 'starts Express', colors.orange, 220),
         arrow(),
@@ -656,8 +745,9 @@ addSlide((slide) => {
         '> npm test',
         'Generated 2 API routes',
         'Generated 2 Playwright API tests',
+        'Generated 1 Playwright edge test',
         'API server listening at http://127.0.0.1:3774',
-        '2 passed'
+        '3 passed'
       ],
       { size: 25 }
     ),
@@ -667,7 +757,7 @@ addSlide((slide) => {
 
 addSlide((slide) => {
   shell(slide, [
-    title('Provided API mode', '`BASE_URL` switches generated tests from demo mode to target-API mode.'),
+    title('Provided API mode', 'BASE_URL switches generated tests from demo mode to target-API mode.'),
     grid(
       { width: fill, height: fill, columns: [fr(1), fr(1)], columnGap: 54 },
       [
@@ -679,9 +769,13 @@ addSlide((slide) => {
               [
                 'npm run generate:from-spec -- \\',
                 '  --spec ./path/to/openapi.yaml \\',
-                '  --output tests/generated/openapi.spec.ts'
+                '  --output tests/generated/openapi.spec.ts',
+                '',
+                'npm run generate:edge-from-spec -- \\',
+                '  --spec ./path/to/openapi.yaml \\',
+                '  --output tests/generated/openapi.edge.spec.ts'
               ],
-              { size: 22 }
+              { size: 18 }
             ),
             t('The input can be a local YAML/JSON file or an HTTP(S) URL.', { size: 25, color: colors.muted, width: wrap(720) })
           ]
@@ -719,9 +813,9 @@ addSlide((slide) => {
           { width: fill, height: fill, gap: 24, justify: 'center' },
           [
             t('Current limits', { size: 42, bold: true, fontFamily: fonts.display, color: colors.orange }),
-            numberedReason('L1', '$ref parameters', 'Not expanded yet.', colors.orange),
-            numberedReason('L2', 'Schema-only bodies', 'Produce status-only tests.', colors.orange),
-            numberedReason('L3', 'Auth', 'Configured separately in Playwright.', colors.orange)
+            numberedReason('L1', '$ref and composed schemas', 'Only simple inline cases are handled today.', colors.orange),
+            numberedReason('L2', 'Schema-only responses', 'Produce status-only happy-path tests.', colors.orange),
+            numberedReason('L3', 'Validation required', 'Edge tests pass when the target API enforces the contract.', colors.orange)
           ]
         ),
         column(
@@ -736,7 +830,7 @@ addSlide((slide) => {
               step('Run', 'contract checks', colors.greenDark, 180)
             ]),
             rule({ width: fixed(620), stroke: colors.line, weight: 3 }),
-            t('Next: schema validation, negative tests, auth profiles, multi-example generation, and CI.', {
+            t('Next: deeper schema validation, auth profiles, multi-example generation, boundary matrices, and CI.', {
               size: 29,
               color: colors.ink,
               width: wrap(720),

@@ -12,7 +12,11 @@ export interface OpenApiSpec {
     title: string;
     version: string;
   };
+  security?: SecurityRequirement[];
   paths: Record<string, PathItem>;
+  components?: {
+    schemas?: Record<string, OpenApiSchema>;
+  };
 }
 
 export type PathItem = Partial<Record<HttpMethod, Operation>>;
@@ -23,6 +27,7 @@ export interface Operation {
   parameters?: Array<Parameter | ReferenceObject>;
   requestBody?: RequestBody;
   responses?: Record<string, ResponseObject>;
+  security?: SecurityRequirement[];
 }
 
 export interface ReferenceObject {
@@ -32,15 +37,13 @@ export interface ReferenceObject {
 export interface Parameter {
   name: string;
   in: 'path' | 'query' | 'header' | 'cookie';
+  required?: boolean;
   example?: unknown;
-  schema?: {
-    default?: unknown;
-    example?: unknown;
-    type?: string;
-  };
+  schema?: OpenApiSchema;
 }
 
 export interface RequestBody {
+  required?: boolean;
   content?: Record<string, MediaTypeObject>;
 }
 
@@ -50,9 +53,32 @@ export interface ResponseObject {
 }
 
 export interface MediaTypeObject {
+  schema?: OpenApiSchema;
   example?: unknown;
   examples?: Record<string, ExampleObject>;
 }
+
+export interface OpenApiSchema {
+  $ref?: string;
+  allOf?: OpenApiSchema[];
+  anyOf?: OpenApiSchema[];
+  oneOf?: OpenApiSchema[];
+  type?: string;
+  format?: string;
+  default?: unknown;
+  example?: unknown;
+  enum?: unknown[];
+  minimum?: number;
+  maximum?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  required?: string[];
+  properties?: Record<string, OpenApiSchema>;
+  items?: OpenApiSchema;
+}
+
+export type SecurityRequirement = Record<string, string[]>;
 
 export interface ExampleObject {
   value?: unknown;
@@ -158,9 +184,13 @@ export function selectSuccessResponseContract(operation: Operation): ResponseCon
 }
 
 export function selectRequestJsonExample(operation: Operation): unknown {
-  const content = operation.requestBody?.content ?? {};
-  const media = content['application/json'] ?? Object.entries(content).find(([mediaType]) => mediaType.includes('json'))?.[1];
+  const media = selectRequestJsonMedia(operation);
   return media ? extractExample(media) : undefined;
+}
+
+export function selectRequestJsonMedia(operation: Operation): MediaTypeObject | undefined {
+  const content = operation.requestBody?.content ?? {};
+  return content['application/json'] ?? Object.entries(content).find(([mediaType]) => mediaType.includes('json'))?.[1];
 }
 
 export function toExpressPath(openApiPath: string): string {
@@ -241,7 +271,7 @@ function parameterValue(name: string, operation: Operation): unknown {
   return parameter ? sampleParameterValue(parameter) : `sample-${name}`;
 }
 
-function concreteParameters(operation: Operation): Parameter[] {
+export function concreteParameters(operation: Operation): Parameter[] {
   return operation.parameters?.filter(isParameter) ?? [];
 }
 
@@ -249,7 +279,7 @@ function isParameter(parameter: Parameter | ReferenceObject): parameter is Param
   return 'name' in parameter && 'in' in parameter;
 }
 
-function sampleParameterValue(parameter: Parameter): unknown {
+export function sampleParameterValue(parameter: Parameter): unknown {
   if (parameter.example !== undefined) {
     return parameter.example;
   }

@@ -5,16 +5,19 @@
   "type": "module",
   "description": "Learning project for generating an API and Playwright API tests from an OpenAPI 3.0 specification.",
   "scripts": {
-    "generate": "npm run generate:api && npm run generate:tests",
+    "generate": "npm run generate:api && npm run generate:tests && npm run generate:edge-tests",
     "generate:api": "tsx scripts/generate-api.ts",
     "generate:tests": "tsx scripts/generate-tests.ts",
+    "generate:edge-tests": "tsx scripts/generate-edge-tests.ts",
     "generate:from-spec": "tsx scripts/generate-tests.ts",
+    "generate:edge-from-spec": "tsx scripts/generate-edge-tests.ts",
     "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
     "test": "npm run generate && playwright test",
     "test:api": "npm test",
     "test:generated": "playwright test tests/generated",
-    "test:contract": "npm run generate:tests && playwright test tests/generated",
+    "test:contract": "npm run generate:tests && npm run generate:edge-tests && playwright test tests/generated",
+    "test:edge": "npm run generate:edge-tests && playwright test tests/generated/openapi.edge.spec.ts",
     "test:report": "playwright show-report"
   },
   "dependencies": {

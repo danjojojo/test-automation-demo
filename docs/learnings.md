@@ -23,3 +23,9 @@ OpenAPI Generator is the production-grade path for broad code generation. A loca
 ## 6. The Workflow Should Accept A Spec As Input
 
 The end goal is not only this sample API. The reusable workflow is: provide a local or remote OpenAPI spec, generate Playwright tests, set `BASE_URL`, and run those tests against the target API.
+
+## 7. Edge Cases Need More Than Success Examples
+
+The first generator creates positive contract tests from successful responses and examples. Edge tests require a second pass that deliberately creates invalid requests from required parameters, typed schemas, request body constraints, documented `4xx` responses, and security requirements.
+
+The practical lesson: richer OpenAPI contracts produce richer generated negative tests. If the spec only documents happy paths, the edge generator can still check universal behavior like an unknown-route `404`, but it needs validation metadata to create meaningful boundary and failure cases.
