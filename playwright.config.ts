@@ -11,7 +11,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [
     ['list'],
-    ['html', { open: 'never' }]
+    ['html', { open: 'always' }]
   ],
   use: {
     baseURL,
@@ -22,7 +22,7 @@ export default defineConfig({
   ...(shouldStartLocalServer
     ? {
         webServer: {
-          command: `PORT=${port} npm run start`,
+          command: `npm run start`,
           url: `${localBaseURL}/`,
           reuseExistingServer: !process.env.CI,
           timeout: 15_000,

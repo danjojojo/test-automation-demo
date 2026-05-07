@@ -201,7 +201,7 @@ export function toRequestPath(openApiPath: string, operation: Operation): string
   return openApiPath.replace(/{([^}]+)}/g, (_, name: string) => encodeURIComponent(String(parameterValue(name, operation))));
 }
 
-export function toRequestUrl(openApiPath: string, operation: Operation): string {
+export function toRequestUrl(openApiPath: string, operation: Operation, baseUrl: string): string {
   const requestPath = toRequestPath(openApiPath, operation);
   const searchParams = new URLSearchParams();
 
@@ -212,7 +212,9 @@ export function toRequestUrl(openApiPath: string, operation: Operation): string 
   }
 
   const query = searchParams.toString();
-  return query ? `${requestPath}?${query}` : requestPath;
+  const prefix = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const url = `${prefix}${requestPath}`;
+  return query ? `${url}?${query}` : url;
 }
 
 export function operationLabel(entry: OperationEntry): string {

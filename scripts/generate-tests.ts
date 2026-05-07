@@ -21,12 +21,18 @@ const { positionals, values } = parseArgs({
     output: {
       type: 'string',
       short: 'o'
+    },
+    baseUrl: {
+      type: 'string',
+      short: 'b'
     }
   }
 });
 
 const specInput = values.spec ?? positionals[0] ?? process.env.OPENAPI_SPEC ?? 'openapi/api-with-examples.yaml';
 const outputPath = values.output ?? positionals[1] ?? process.env.OPENAPI_TEST_OUTPUT ?? 'tests/generated/openapi.spec.ts';
+const baseUrl = values.baseUrl ?? positionals[2] ?? process.env.OPENAPI_BASE_URL ?? 'http://127.0.0.1:3774';
+
 const spec = await loadSpec(specInput);
 
 const testBlocks = listOperations(spec).flatMap((entry) => {
@@ -37,7 +43,7 @@ const testBlocks = listOperations(spec).flatMap((entry) => {
 
   const requestBody = selectRequestJsonExample(entry.operation);
   const requestOptions = requestBody === undefined ? undefined : `{ data: ${toTsValue(requestBody)} }`;
-  const requestCall = buildRequestCall(entry.method, toRequestUrl(entry.path, entry.operation), requestOptions);
+  const requestCall = buildRequestCall(entry.method, toRequestUrl(entry.path, entry.operation, baseUrl), requestOptions);
   const assertions = buildAssertions(responseContract);
 
   return `  test(${JSON.stringify(`${operationLabel(entry)} returns ${responseContract.status}`)}, async ({ request }) => {

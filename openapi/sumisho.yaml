@@ -1,0 +1,344 @@
+openapi: 3.0.0
+info:
+  title: Sumisho API Collection
+  version: 1.0.0
+  description: ""
+servers:
+  - url: "{{BASE_URL}}"
+  - url: ""
+paths:
+  /admin/users:
+    get:
+      summary: Get All Admins
+      responses: {}
+      tags:
+        - Admin User Management
+    post:
+      summary: Create New Admin
+      responses: {}
+      tags:
+        - Admin User Management
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email_address:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                status:
+                  type: boolean
+            example:
+              first_name: Test
+              last_name: DJ
+              email_address: dj.molina+10@make.technology
+              role: superadmin
+              status: true
+  /admin/users/me:
+    get:
+      summary: View Profile
+      responses: {}
+      tags:
+        - Admin User Management
+    delete:
+      summary: Deactivate User Profile
+      responses: {}
+      tags:
+        - Admin User Management
+    patch:
+      summary: Update Profile
+      responses: {}
+      tags:
+        - Admin User Management
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+            example:
+              first_name: DJ
+              last_name: Admin User 1 (NEW)
+  /admin/users/7474928c-fea3-408e-9d6f-be5b64602366:
+    get:
+      summary: Get Single Admin
+      responses: {}
+      tags:
+        - Admin User Management
+      security:
+        - BearerAuth: []
+    delete:
+      summary: Deactivate Admin
+      responses: {}
+      tags:
+        - Admin User Management
+  /admin/users/5219e63c-b50a-4555-98e7-f904f59751e9:
+    patch:
+      summary: Update User
+      responses: {}
+      tags:
+        - Admin User Management
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                status:
+                  type: boolean
+            example:
+              first_name: DJ
+              last_name: Real Admin 2 (NEW)
+              status: true
+  /admin/users/f4ce96a1-3fa3-44d5-9813-eca032b95423/change-password:
+    patch:
+      summary: Update Password
+      responses: {}
+      tags:
+        - Admin User Management
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+            example:
+              currentPassword: sumishoAPI1238
+              newPassword: sumishoAPI1239
+              confirmPassword: sumishoAPI1239
+  /admin/app-users/1315c820-649e-444a-aa01-eb16d98fdd8f/loans/100388000000045/details:
+    get:
+      summary: Get Loan Info
+      responses: {}
+      tags:
+        - User Management
+        - Loan Info
+  /admin/app-users/1315c820-649e-444a-aa01-eb16d98fdd8f/loans/100388000000045/payments:
+    get:
+      summary: Get Loan Payments
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: 1
+      responses: {}
+      tags:
+        - User Management
+        - Loan Info
+  /admin/app-users/1315c820-649e-444a-aa01-eb16d98fdd8f/loans:
+    get:
+      summary: Get Loans
+      responses: {}
+      tags:
+        - User Management
+        - Loan Info
+  /:
+    get:
+      summary: Is Loan Available
+      responses: {}
+      tags:
+        - User Management
+        - Loan Info
+  /admin/app-users:
+    get:
+      summary: Get All Users
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          example: active
+        - name: q
+          in: query
+          schema:
+            type: string
+          example: 4ef56cbd-1c27-4a6c-966b-8bcff94487a5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          example: 1
+      responses: {}
+      tags:
+        - User Management
+  /admin/app-users/1315c820-649e-444a-aa01-eb16d98fdd8f:
+    get:
+      summary: Get Single User
+      responses: {}
+      tags:
+        - User Management
+    delete:
+      summary: New Request
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema: {}
+          example: "1"
+      responses: {}
+      tags:
+        - User Management
+  /admin/app-users/4ef56cbd-1c27-4a6c-966b-8bcff94487a5/suspend:
+    patch:
+      summary: Suspend User
+      responses: {}
+      tags:
+        - User Management
+  /admin/app-users/4ef56cbd-1c27-4a6c-966b-8bcff94487a5/activate:
+    patch:
+      summary: Activate User
+      responses: {}
+      tags:
+        - User Management
+  /auth/registration/start:
+    post:
+      summary: Register User
+      responses: {}
+      tags:
+        - Logins
+        - Mobile Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileNumber:
+                  type: string
+                  format: utc-millisec
+                countryCode:
+                  type: string
+                  format: utc-millisec
+            example:
+              mobileNumber: "9602335632"
+              countryCode: "63"
+  /auth/otp/verify-registration:
+    post:
+      summary: Verify Registration
+      responses: {}
+      tags:
+        - Logins
+        - Mobile Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otpUuid:
+                  type: string
+                otp:
+                  type: string
+                  format: color
+            example:
+              otpUuid: 43292b34-0294-4486-92e7-bb18df5d52df
+              otp: "620987"
+  /auth/registration/complete:
+    post:
+      summary: Complete Registration
+      responses: {}
+      tags:
+        - Logins
+        - Mobile Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                birthDate:
+                  type: string
+                  format: date
+                email:
+                  type: string
+                  format: email
+                mobileNumber:
+                  type: string
+                  format: utc-millisec
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+            example:
+              firstName: DJ
+              lastName: Molina
+              birthDate: "2003-03-11"
+              email: dj.molina+appuser@make.technology
+              mobileNumber: "+639602335630"
+              password: sumishoAPI123!
+              confirmPassword: sumishoAPI123!
+  /auth/login:
+    post:
+      summary: Login
+      responses: {}
+      tags:
+        - Logins
+        - Mobile Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileNumber:
+                  type: string
+                  format: utc-millisec
+                password:
+                  type: string
+            example:
+              mobileNumber: "+639602335630"
+              password: sumishoAPI123!
+  /admin/auth/login:
+    post:
+      summary: Backoffice Login
+      responses: {}
+      tags:
+        - Logins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email_address:
+                  type: string
+                  format: email
+                password:
+                  type: string
+            example:
+              email_address: admindev@gmail.com
+              password: sumishoAPI123!
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - BearerAuth: []
