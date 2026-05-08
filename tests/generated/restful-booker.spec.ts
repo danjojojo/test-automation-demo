@@ -29,11 +29,15 @@ test.describe("OpenAPI generated contract examples", () => {
       },
     );
 
+    const body = await response.json();
+    await test.info().attach("Response", {
+      body: JSON.stringify(body, null, 2),
+      contentType: "application/json",
+    });
+    token = body.token;
+
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("application/json");
-
-    const body = await response.json();
-    token = body.token;
     expect(body).toHaveProperty("token");
   });
 
@@ -42,10 +46,14 @@ test.describe("OpenAPI generated contract examples", () => {
       "https://restful-booker.herokuapp.com/booking",
     );
 
+    const body = await response.json();
+    await test.info().attach("Response", {
+      body: JSON.stringify(body, null, 2),
+      contentType: "application/json",
+    });
+
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("application/json");
-
-    const body = await response.json();
     expect(body).toBeInstanceOf(Array);
   });
 
@@ -67,11 +75,15 @@ test.describe("OpenAPI generated contract examples", () => {
       },
     );
 
+    const body = await response.json();
+    await test.info().attach("Response", {
+      body: JSON.stringify(body, null, 2),
+      contentType: "application/json",
+    });
+    bookingId = body.bookingid;
+
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("application/json");
-
-    const body = await response.json();
-    bookingId = body.bookingid;
     expect(body).toHaveProperty("bookingid");
   });
 
@@ -80,9 +92,13 @@ test.describe("OpenAPI generated contract examples", () => {
       `https://restful-booker.herokuapp.com/booking/${bookingId}`,
     );
 
-    expect(response.status()).toBe(200);
-
     const body = await response.json();
+    await test.info().attach("Response", {
+      body: JSON.stringify(body, null, 2),
+      contentType: "application/json",
+    });
+    
+    expect(response.status()).toBe(200);
     expect(body).toPass();
   });
 

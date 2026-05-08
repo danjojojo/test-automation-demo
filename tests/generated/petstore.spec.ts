@@ -23,7 +23,7 @@ test.describe("OpenAPI generated contract examples", () => {
 
   test("POST /store/order placeOrder returns 200", async ({ request }) => {
     const data = {
-      id: "asd",
+      id: 10,
       petId: 198772,
       quantity: 7,
       shipDate: "2026-05-06T09:57:59.704Z",

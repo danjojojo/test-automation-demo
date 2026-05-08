@@ -8,15 +8,14 @@ test.describe("OpenAPI generated contract examples", () => {
       "https://fake-json-api.mock.beeceptor.com/companies",
     );
 
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toContain("application/json");
-
     const body = await response.json();
-    expect(body).toBeInstanceOf(Array);
-
     await test.info().attach("Response", {
       body: JSON.stringify(body, null, 2),
       contentType: "application/json",
     });
+
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("application/json");
+    expect(body).toBeInstanceOf(Array);
   });
 });
